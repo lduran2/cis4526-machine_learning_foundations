@@ -5,14 +5,18 @@ r'''
  differentiation.
 
  By        : Leomar Durán <https://github.com/lduran2/>
- When      : 2021-11-05t18:56
+ When      : 2021-11-05t19:38
  Where     : Temple University
  For       : CIS 4526
- Version   : 1.0.5
+ Version   : 1.1.0
  Dataset   : https://archive.ics.uci.edu/ml/datasets/wine+quality
  Canonical : https://github.com/lduran2/cis4526-machine_learning_foundations/blob/master/hw3-gradient_descent/hw3.py
 
  CHANGELOG :
+    v1.1.0 - 2021-11-05t19:38
+        split train, test data, calculated dimensionality
+        
+
     v1.0.5 - 2021-11-05t18:56
         removing invalid rows
 
@@ -38,16 +42,18 @@ import numpy as np
 DATA_FILENAME = r'winequality-white.csv'  # name of file holding the dataset
 DELIMITER = ';' # used to separate values in DATA_FILENAME
 
-POSITIVE_RANGE = range(7,10)
-NEGATIVE_RANGE = range(3,6)
+POSITIVE_RANGE = range(7,10)    # range for positive labels
+NEGATIVE_RANGE = range(3,6)     # range for negative labels
 
 def main():
     r'''
      classify the wine samples
      '''
     # read the dataset into a matrix
-    dataset = np.genfromtxt(DATA_FILENAME, delimiter=DELIMITER, skip_header=True, dtype=np.float64)
-    (N_ROWS, N_COLS) = dataset.shape
+    dataset = np.genfromtxt(
+        DATA_FILENAME, delimiter=DELIMITER,
+        skip_header=True, dtype=np.float64)
+    (num_rows, num_cols) = dataset.shape
     print(dataset.dtype.names)
     print(dataset)
 
@@ -55,18 +61,35 @@ def main():
     # function to classify the label scalars
     vec_classify = np.vectorize(classify)
     # split the dataset
-    (unvalid_features, M_label_scalars) = np.split(dataset, (N_COLS - 1,), axis=1)
+    (unvalid_features, M_label_scalars) = \
+        np.split(dataset, (num_cols - 1,), axis=1)
     # convert to a vector
-    v_label_scalars = M_label_scalars.reshape((N_ROWS,))
+    v_label_scalars = M_label_scalars.reshape((num_rows,))
     # classify the labels
     unvalid_labels = vec_classify(v_label_scalars)
     # remove all 0 rows
     # 0 rows are when the label scalar is neither in [7..10[ nor [3..6[
     should_keep_rows = (unvalid_labels != 0)
+    print(should_keep_rows)
     features = unvalid_features[should_keep_rows,:]
     labels = unvalid_labels[should_keep_rows]
     print(features)
     print(labels)
+
+    (num_examples,) = labels.shape          # num of valid examples
+    num_test = (num_examples//4)            # num of test examples
+    num_train = (num_examples - num_test)   # num of training examples
+    num_dims = features.shape[1]            # dimensionality
+    print(r'train:', num_train, r'; test:', num_test)
+
+    # split features
+    (train_x, test_x) = np.split(features, (num_train,), axis=0)
+    # split labels
+    (train_y, test_y) = np.split(labels, (num_train,), axis=0)
+    print(train_x)
+    print(test_x)
+    print(train_y)
+    print(test_y)
 # end def main()
 
 def classify(scalar):
