@@ -5,14 +5,17 @@ r'''
  differentiation.
 
  By        : Leomar Durán <https://github.com/lduran2/>
- When      : 2021-11-05t17:27
+ When      : 2021-11-05t17:49
  Where     : Temple University
  For       : CIS 4526
- Version   : 1.0.3
+ Version   : 1.0.4
  Dataset   : https://archive.ics.uci.edu/ml/datasets/wine+quality
  Canonical : https://github.com/lduran2/cis-4526-hw2-kNN-vs-pocket/blob/master/hw2.py
 
  CHANGELOG :
+    v1.0.4 - 2021-11-05t17:49
+        divided the features and labels using np.split
+
     v1.0.3 - 2021-11-05t17:27
         extracted the labels (using matrix multiplication)
 
@@ -38,26 +41,35 @@ def main():
      '''
     # read the dataset into a matrix
     dataset = np.genfromtxt(DATA_FILENAME, delimiter=DELIMITER, skip_header=True, dtype=np.float64)
-    N_COLS = dataset.shape[1]
+    (N_ROWS, N_COLS) = dataset.shape
     print(dataset.dtype.names)
     print(dataset)
 
-    # get the labels
+    # divide into features and labels
     # function to classify the label scalars
-    classify = np.vectorize(lambda x : (+1) if (x in range(7,10)) else (-1))
-    # ZERO rows to remove features
-    label_mcand_features = np.zeros(((N_COLS - 1),))
-    # ONE row to keep the label
-    label_mcand_one = np.array([1])
-    # concatenate ZERO and ONE rows to a vector
-    label_mcand = np.concatenate(
-        (label_mcand_features, label_mcand_one), axis=0)
-    # multiply the dataset and labels
-    labels_scalars = (dataset @ label_mcand)
-    # and classify
-    labels = classify(labels_scalars)
+    vec_classify = np.vectorize(classify)
+    # split the dataset
+    (features, M_label_scalars) = np.split(dataset, (N_COLS - 1,), axis=1)
+    # convert to a vector
+    v_label_scalars = M_label_scalars.reshape((N_ROWS,))
+    # classify the labels
+    labels = vec_classify(v_label_scalars)
     print(labels)
 # end def main()
+
+def classify(scalar):
+    r'''
+     Classifies a vector value as (+) or (-)
+     @param scalar : 'int' = value to classify
+     @return +1 if in range(7,10) else -1
+     '''
+    #
+    result = -1
+    if (scalar in range(7,10)):
+        result = 1
+    # end if (scalar in range(7,10))
+    return result
+# end
 
 # run main if this package was run
 if (__name__==r'__main__'):
