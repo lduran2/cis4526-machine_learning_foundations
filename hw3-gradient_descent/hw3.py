@@ -5,14 +5,20 @@ r'''
  differentiation.
 
  By        : Leomar Durán <https://github.com/lduran2/>
- When      : 2021-11-05t21:27
+ When      : 2021-11-05t22:21
  Where     : Temple University
  For       : CIS 4526
- Version   : 1.2.0
+ Version   : 1.3.0
  Dataset   : https://archive.ics.uci.edu/ml/datasets/wine+quality
  Canonical : https://github.com/lduran2/cis4526-machine_learning_foundations/blob/master/hw3-gradient_descent/hw3.py
 
  CHANGELOG :
+    v1.3.0 - 2021-11-05t22:21
+        normalized features
+
+    v1.2.1 - 2021-11-05t21:46
+        abstracted train ratio and classifier
+
     v1.2.0 - 2021-11-05t21:27
         folded in the template
 
@@ -50,6 +56,8 @@ DELIMITER = ';' # used to separate values in DATA_FILENAME
 POSITIVE_RANGE = range(7,10)    # range for positive labels
 NEGATIVE_RANGE = range(3,6)     # range for negative labels
 
+TRAIN_RATIO = 3                 # ratio of training to testing data
+
 def main():
     r'''
      classify the wine samples
@@ -59,10 +67,11 @@ def main():
         DATA_FILENAME, delimiter=DELIMITER,
         skip_header=True, dtype=np.float64)
     # get the training and testing data
-    (features, labels) = splitFeaturesLabels(dataset)
+    (unnormal_features, labels) = splitFeaturesLabels(dataset, classify)
+    features = normalizeFeatures(unnormal_features)
     (train_x, test_x, train_y, test_y, \
             num_test, num_train, num_dims) = \
-        splitTrainTest(features, labels)
+        splitTrainTest(features, labels, TRAIN_RATIO)
     #
 # end def main()
 
@@ -124,6 +133,7 @@ def train_classifier(train_x, train_y, learn_rate, loss, \
      @param regularizer : 'function' = a regularizer function
      @return the vector of learned linear classifier weights
      '''
+    
     return None
 # end def train_classifier(train_x, train_y, learn_rate, loss,
 #       lambda_val, regularizer)
@@ -157,10 +167,11 @@ def get_id():
     return r'tuh24865'
 # end def get_id()
 
-def splitFeaturesLabels(dataset):
+def splitFeaturesLabels(dataset, classify):
     r'''
      Divides the dataset into features and labels.
      @param dataset : 'numpy.ndarray' = the dataset to divide
+     @param classify : 'function' = label classifier function
      @return a tuple containing the features and the labels
      '''
     # get the number of rows and columns
@@ -186,19 +197,39 @@ def splitFeaturesLabels(dataset):
     return (features, labels)
 # end def splitFeaturesLabels(dataset)
 
-def splitTrainTest(features, labels):
+def normalizeFeatures(unnormal_features):
+    r'''
+     Normalizes the given features
+     @param unnormal_features : 'numpy.ndarray' = to normalize
+     @return the given features normalized
+     '''
+    # center the data
+    means = unnormal_features.mean(axis=0)
+    centered = (unnormal_features - means)
+    # scale the data
+    absmaxa = np.amax(np.absolute(centered), axis=0)
+    scaled = (centered / absmaxa)
+    # 1 pad
+    num_examples = scaled.shape[0]
+    one_pad = np.ones((num_examples,1))
+    padded = np.concatenate((one_pad, scaled), axis=1)
+    return padded
+# end def normalizeFeatures()
+
+def splitTrainTest(features, labels, train_ratio):
     r'''
      Divides the train, test data × features, labels.
      @param features : 'numpy.ndarray' = of the dataset
      @param labels : 'numpy.ndarray' = of the dataset
+     @param train_ratio : 'int' = ratio of training to testing data
      @return a tuple containing the (train_x, test_x, train_y, test_y),
         the number of testing and training examples, and the
         dimensionality
      '''
-    (num_examples,) = labels.shape          # num of valid examples
-    num_test = (num_examples//4)            # num of test examples
-    num_train = (num_examples - num_test)   # num of training examples
-    num_dims = features.shape[1]            # dimensionality
+    (num_examples,) = labels.shape                  # num of valid examples
+    num_test = (num_examples//(train_ratio + 1))    # num of test examples
+    num_train = (num_examples - num_test)       # num of training examples
+    num_dims = features.shape[1]                    # dimensionality
 
     # split features
     (train_x, test_x) = np.split(features, (num_train,), axis=0)
