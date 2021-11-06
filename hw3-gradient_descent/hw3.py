@@ -5,14 +5,17 @@ r'''
  differentiation.
 
  By        : Leomar Durán <https://github.com/lduran2/>
- When      : 2021-11-05t22:21
+ When      : 2021-11-05t22:40
  Where     : Temple University
  For       : CIS 4526
- Version   : 1.3.0
+ Version   : 1.4.0
  Dataset   : https://archive.ics.uci.edu/ml/datasets/wine+quality
  Canonical : https://github.com/lduran2/cis4526-machine_learning_foundations/blob/master/hw3-gradient_descent/hw3.py
 
  CHANGELOG :
+    v1.4.0 - 2021-11-05t22:40
+        implemented perception
+
     v1.3.0 - 2021-11-05t22:21
         normalized features
 
@@ -73,6 +76,10 @@ def main():
             num_test, num_train, num_dims) = \
         splitTrainTest(features, labels, TRAIN_RATIO)
     #
+
+    # train the classifier with the data
+    w = train_classifier(train_x, train_y, 1, hinge_loss, 1, l1_reg)
+    print(w)
 # end def main()
 
 def hinge_loss(train_y, pred_y):
@@ -133,8 +140,20 @@ def train_classifier(train_x, train_y, learn_rate, loss, \
      @param regularizer : 'function' = a regularizer function
      @return the vector of learned linear classifier weights
      '''
-    
-    return None
+    max_iter = 10               # maximum num of iterations
+    num_dims = train_x.shape[1] # dimensionality
+    w = np.zeros((num_dims,))   # zero out a vector (b = w[0])
+    for k in range(max_iter):
+        for (x,y) in zip(train_x, train_y):
+            activation = w * x
+            for d in range(num_dims):
+                if ((y*activation[d]) <= 0):
+                    w[d] += y*x[d]
+                # end if ((y*activation) <= 0)
+            # end for d in range(num_dims)
+        # end for (x,y) in zip(train_x, train_y)
+    # for k in range(0,max_iter)
+    return w
 # end def train_classifier(train_x, train_y, learn_rate, loss,
 #       lambda_val, regularizer)
 
