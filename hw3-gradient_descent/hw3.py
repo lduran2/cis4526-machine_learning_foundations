@@ -5,14 +5,17 @@ r'''
  differentiation.
 
  By        : Leomar Durán <https://github.com/lduran2/>
- When      : 2021-11-05t22:40
+ When      : 2021-11-05t23:01
  Where     : Temple University
  For       : CIS 4526
- Version   : 1.4.0
+ Version   : 1.4.1
  Dataset   : https://archive.ics.uci.edu/ml/datasets/wine+quality
  Canonical : https://github.com/lduran2/cis4526-machine_learning_foundations/blob/master/hw3-gradient_descent/hw3.py
 
  CHANGELOG :
+    v1.4.1 - 2021-11-05t23:01
+        tested the perceptron and calculated its accuracy
+
     v1.4.0 - 2021-11-05t22:40
         implemented perception
 
@@ -77,9 +80,11 @@ def main():
         splitTrainTest(features, labels, TRAIN_RATIO)
     #
 
-    # train the classifier with the data
+    # train, test the classifier with the data, and calculate accuracy
     w = train_classifier(train_x, train_y, 1, hinge_loss, 1, l1_reg)
-    print(w)
+    pred_y = test_classifier(w, test_x)
+    acc = compute_accuracy(test_y, pred_y)
+    print(acc)
 # end def main()
 
 def hinge_loss(train_y, pred_y):
@@ -132,6 +137,7 @@ def l2_reg(w):
 def train_classifier(train_x, train_y, learn_rate, loss, \
         lambda_val, regularizer):
     r'''
+     Implements a perceptron using the given training data.
      @param train_x : 'numpy.ndarray' = training features (num_train×1)
      @param train_y : 'numpy.ndarray' = training labels (num_train×1)
      @param learn_rate : 'float' = the learning rate for gradient descent
@@ -159,23 +165,29 @@ def train_classifier(train_x, train_y, learn_rate, loss, \
 
 def test_classifier(w, test_x):
     r'''
+     Tests the training model represented by `w` against test input
+     `test_x`.
      @param w : 'numpy.ndarray' =
         vector of linear classifier weights
         (num_dims×1)
      @param test_x : 'numpy.ndarray' = data matrix (num_test × num_dims)
      @return the num_test×1 prediction vector
      '''
-    pred_y = None
+    pred_y = np.sign(test_x @ w)    # y = sgn(X.w)
     return pred_y
 # end def test_classifier(w, test_x)
 
 def compute_accuracy(test_y, pred_y):
     r'''
+     Calculates the accuracy of a training model resulting in
+     `pred_y` against test output `test_y`.
      @param train_y : 'numpy.ndarray' = training labels (num_train×1)
      @param pred_y : 'numpy.ndarray' = predicted labels (num_train×1)
      @return the classification accuracy in [0.0, 1.0]
      '''
-    acc = None
+    num_test = test_y.shape[0]          # num of test examples
+    equals = np.equal(test_y, pred_y)   # true if test_y == pred_y
+    acc = np.sum(equals)/num_test       # Acc = sum(1[equal])/nu(test_y)
     return acc
 # end def compute_accuracy(test_y, pred_y)
 
