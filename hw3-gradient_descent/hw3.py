@@ -5,14 +5,17 @@ r'''
  differentiation.
 
  By        : Leomar Durán <https://github.com/lduran2/>
- When      : 2021-11-05t21:03
+ When      : 2021-11-05t21:27
  Where     : Temple University
  For       : CIS 4526
- Version   : 1.1.1
+ Version   : 1.2.0
  Dataset   : https://archive.ics.uci.edu/ml/datasets/wine+quality
  Canonical : https://github.com/lduran2/cis4526-machine_learning_foundations/blob/master/hw3-gradient_descent/hw3.py
 
  CHANGELOG :
+    v1.2.0 - 2021-11-05t21:27
+        folded in the template
+
     v1.1.1 - 2021-11-05t21:03
         abstracted the parts of the main method
 
@@ -41,7 +44,7 @@ r'''
 
 import numpy as np
 
-DATA_FILENAME = r'winequality-white.csv'  # name of file holding the dataset
+DATA_FILENAME = r'winequality-white.csv'  # name of file holding dataset
 DELIMITER = ';' # used to separate values in DATA_FILENAME
 
 POSITIVE_RANGE = range(7,10)    # range for positive labels
@@ -62,6 +65,97 @@ def main():
         splitTrainTest(features, labels)
     #
 # end def main()
+
+def hinge_loss(train_y, pred_y):
+    r'''
+     @param train_y : 'numpy.ndarray' = training labels (num_train×1)
+     @param pred_y : 'numpy.ndarray' = predicted labels (num_train×1)
+     '''
+    L = None
+    return L
+# end def hinge_loss(train_y, pred_y)
+
+def squared_loss(train_y, pred_y):
+    r'''
+     @param train_y : 'numpy.ndarray' = training labels (num_train×1)
+     @param pred_y : 'numpy.ndarray' = predicted labels (num_train×1)
+     '''
+    L = None
+    return L
+# end def squared_loss(train_y, pred_y)
+
+def logistic_loss(train_y, pred_y):
+    r'''
+     @param train_y : 'numpy.ndarray' = training labels (num_train×1)
+     @param pred_y : 'numpy.ndarray' = predicted labels (num_train×1)
+     '''
+    L = None
+    return L
+# end def logistic_loss(train_y, pred_y)
+
+def l1_reg(w):
+    r'''
+     @param w : 'numpy.ndarray' =
+        vector of linear classifier weights
+        (num_dims×1)
+     '''
+    L = None
+    return L
+# end def l1_reg(w)
+
+def l2_reg(w):
+    r'''
+     @param w : 'numpy.ndarray' =
+        vector of linear classifier weights
+        (num_dims×1)
+     '''
+    L = None
+    return L
+# end def l2_reg(w)
+
+def train_classifier(train_x, train_y, learn_rate, loss, \
+        lambda_val, regularizer):
+    r'''
+     @param train_x : 'numpy.ndarray' = training features (num_train×1)
+     @param train_y : 'numpy.ndarray' = training labels (num_train×1)
+     @param learn_rate : 'float' = the learning rate for gradient descent
+     @param loss : 'function' = a loss function
+     @param lambda_val : 'float' = tradeoff parameter
+     @param regularizer : 'function' = a regularizer function
+     @return the vector of learned linear classifier weights
+     '''
+    return None
+# end def train_classifier(train_x, train_y, learn_rate, loss,
+#       lambda_val, regularizer)
+
+def test_classifier(w, test_x):
+    r'''
+     @param w : 'numpy.ndarray' =
+        vector of linear classifier weights
+        (num_dims×1)
+     @param test_x : 'numpy.ndarray' = data matrix (num_test × num_dims)
+     @return the num_test×1 prediction vector
+     '''
+    pred_y = None
+    return pred_y
+# end def test_classifier(w, test_x)
+
+def compute_accuracy(test_y, pred_y):
+    r'''
+     @param train_y : 'numpy.ndarray' = training labels (num_train×1)
+     @param pred_y : 'numpy.ndarray' = predicted labels (num_train×1)
+     @return the classification accuracy in [0.0, 1.0]
+     '''
+    acc = None
+    return acc
+# end def compute_accuracy(test_y, pred_y)
+
+def get_id():
+    r'''
+     @return my TempleU email
+     '''
+    return r'tuh24865'
+# end def get_id()
 
 def splitFeaturesLabels(dataset):
     r'''
@@ -122,7 +216,7 @@ def classify(scalar):
      @return
         (+1) if the value is in [7..10[
         (-1) if the value is in [3..6[
-        
+    
      '''
     #
     result = 0  # default value to return
