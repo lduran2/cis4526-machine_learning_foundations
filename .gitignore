@@ -1,3 +1,10 @@
+# releases, compressed files
+*.zip
+
 # datasets
+dataset-in/
 *.csv
 *.data
+
+# Python cached binaries
+__pycache__/
