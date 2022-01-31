@@ -6,3 +6,5 @@ dataset-in/
 
 # Python cached binaries
 __pycache__/
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
